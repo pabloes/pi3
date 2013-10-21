@@ -85,39 +85,49 @@ function init() {
 
     createScene();
     createCamera();
-
     controls = new THREE.OrbitControls( camera );
     controls.addEventListener( 'change', render );
     scene.add( new THREE.AmbientLight( 0x223388 ) );
     light = createLight1();
     scene.add( light );
-    //createGround();//TODO: when created, after that, you cannot select a block
+    //createGround();//TODO: PI3-1 when created, after that, you cannot select a block
     pi3.mb.buildBlockMap("./maps/blockmap1.json", scene);
     pi3.mb.buildGameMap("./maps/gamemap1.json", scene);
     setRenderer();
     stats = new Stats();
     container.appendChild( stats.domElement );
-    window.addEventListener( 'resize', onWindowResize, false );
 }
-
-$(document).ready(function(){
+var jqDocument = $(document);
+jqDocument.ready(function(){
     init();
     projector = new THREE.Projector();
     animate();
-    $(document).mousedown(function(){
+    jqDocument.mousedown(function(){
         $("body").addClass("mousedown");
-    });
-    $(document).mouseup(function(){
+    }).mouseup(function(){
         $("body").removeClass("mousedown");
     });
+    jqDocument.click(clickEvent);
     document.addEventListener( 'mousemove', onDocumentMouseMove, false );
-    $(document).click(clickEvent);
+    window.addEventListener( 'resize', onWindowResize, false );
+
     $("#setHeight").click(setHeightClick);
     $("#AddXZ").click(AddXZClick);
     $("#exportBlockMap").click(exportBlockMap);
     $("#exportGameToJSON").click(exportGameToJSON);
 
 });
+
+function clickEvent(){
+        if(INTERSECTED){
+            if(selectedBlock){
+                selectedMesh.material.color.setHex( pi3.mb.getType(selectedBlock[0],selectedBlock[1])==="water"?0x0000ff: 0xffffff );
+            }
+            INTERSECTED.material.color.setHex( 0xffff00 );
+            selectedMesh = INTERSECTED;
+            selectedBlock = pi3.mb.getMapPosition(INTERSECTED);
+        }
+}
 
 function exportBlockMap(){
     pengine.mapBuilder.exportToJSON();
@@ -127,6 +137,10 @@ function exportGameToJSON(){
     pengine.mapBuilder.exportGameToJSON();
 }
 
+function setHeight(newVal){
+        pi3.mb.setHeight(selectedBlock[0],selectedBlock[1], newVal , selectedMesh, scene);
+}
+
 function setHeightClick(){
         var retVal = prompt("Enter new height value for the selected block", selectedMesh.height);
         setHeight(retVal);
@@ -134,17 +148,6 @@ function setHeightClick(){
 
 function AddXZClick(){
     pengine.mapBuilder.AddXZ(scene);
-}
-
-function clickEvent(){
-    if(INTERSECTED){
-        if(selectedBlock){
-            selectedMesh.material.color.setHex( pi3.mb.getType(selectedBlock[0],selectedBlock[1])==="water"?0x0000ff: 0xffffff );
-        }
-        INTERSECTED.material.color.setHex( 0xffff00 );
-        selectedMesh = INTERSECTED;
-        selectedBlock = pi3.mb.getMapPosition(INTERSECTED);
-    }
 }
 
 function onDocumentMouseMove(event){
@@ -213,10 +216,6 @@ function animate() {
     controls.update();
     stats.update();
     render();
-}
-
-function setHeight(newVal){
-    pi3.mb.setHeight(selectedBlock[0],selectedBlock[1], newVal , selectedMesh, scene);
 }
 
 function render() {
