@@ -1,0 +1,44 @@
+body {
+    font-family: Monospace;
+    color: #000;
+    margin: 0px;
+    overflow: hidden;
+    cursor: url(textures/cursor.png), auto;
+}
+body.mousedown{
+    cursor:move;
+}
+#container {
+    width: 80%;
+    height: 100%;
+}
+#txt1 {
+    height: 100px;
+    width: 200px;
+    float: left;
+    margin-left: 200px;
+    color: black;
+    z-index: 2;
+}
+textarea{
+    background-color: transparent;
+    border: none;
+
+}
+#info {
+    position: fixed;
+    color: black;
+    text-align: center;
+    padding: 10px;
+    z-index: 999;
+    width: 100%;
+}
+
+a {
+    text-decoration: underline;
+    cursor: pointer;
+}
+#stats { position: absolute; top:0; left: 0 }
+#stats #fps { background: transparent !important }
+#stats #fps #fpsText { color: #aaa !important }
+#stats #fps #fpsGraph { display: none }

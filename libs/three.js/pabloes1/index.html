@@ -1,0 +1,31 @@
+<!doctype html>
+<html lang="en">
+<head>
+    <title>three.js webgl - cloth simulation</title>
+    <link href="css/main.css" rel="stylesheet" />
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, user-scalable=no, minimum-scale=1.0, maximum-scale=1.0">
+    <script type="text/javascript" src="../../jquery-1.10.2.min.js"></script>
+</head>
+<body>
+<div id="info">
+    JSON: <a onclick="pengine.blockMapBuilder.exportToJSON();">blockMap</a> <a onclick="pengine.blockMapBuilder.exportGameToJSON();">gameMap</a> <br/>
+    AddXZ: <a onclick="pengine.blockMapBuilder.AddXZ();">AddXZ</a>
+    setHeight: <a id="setHeight">setHeight</a>
+   <div>
+       <textarea rows="4" cols="50" id="txt2"></textarea>
+   </div>
+</div>
+<div style="position: fixed; z-index: 99999999;">
+    <textarea rows="4" cols="50" id="txt1"></textarea>
+</div>
+<script src="../build/three.min.js"></script>
+<script src="../examples/js/Detector.js"></script>
+<script src="../examples/js/libs/stats.min.js"></script>
+<script src="pengine/OrbitControls.js"></script>
+<script src="pengine/mapBuilder.js"></script>
+<script src="pengine/THREEx.KeyboardState.js"></script>
+<script src="main.js"></script>
+
+</body>
+</html>

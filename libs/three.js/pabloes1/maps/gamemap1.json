@@ -1,0 +1,164 @@
+{
+    "name": "mapa1",
+    "arrayMap": [
+        [
+            {
+                "state": 1,
+                "playerid": "1",
+                "type": "village"
+            },
+            {
+                "state": 0,
+                "playerid": null, "type":null
+            },
+            {
+                "state": 0,
+                "playerid": null, "type":null
+            },
+            {
+                "state": 0,
+                "playerid": null, "type":null
+            },
+            {
+                "state": 0,
+                "playerid": null, "type":null
+            },
+            {
+                "state": 0,
+                "playerid": null, "type":null
+            }
+        ],
+        [
+            {
+                "state": 0,
+                "playerid": null, "type":null
+            },
+            {
+                "state": 0,
+                "playerid": null, "type":null
+            },
+            {
+                "state": 0,
+                "playerid": null, "type":null
+            },
+            {
+                "state": 0,
+                "playerid": null, "type":null
+            },
+            {
+                "state": 0,
+                "playerid": null, "type":null
+            },
+            {
+                "state": 1,
+                "playerid": "1",
+                "type": "mine"
+            }
+        ],
+        [
+            {
+                "state": 0,
+                "playerid": null, "type":null
+            },
+            {
+                "state": 0,
+                "playerid": null, "type":null
+            },
+            {
+                "state": 0,
+                "playerid": null, "type":null
+            },
+            {
+                "state": 0,
+                "playerid": null, "type":null
+            },
+            {
+                "state": 0,
+                "playerid": null, "type":null
+            },
+            {
+                "state": 0,
+                "playerid": null, "type":null
+            }
+        ],
+        [
+            {
+                "state": 0,
+                "playerid": null, "type":null
+            },
+            {
+                "state": 0,
+                "playerid": null, "type":null
+            },
+            {
+                "state": 0,
+                "playerid": null, "type":null
+            },
+            {
+                "state": 0,
+                "playerid": null, "type":null
+            },
+            {
+                "state": 0,
+                "playerid": null, "type":null
+            },
+            {
+                "state": 0,
+                "playerid": null, "type":null
+            }
+        ],
+        [
+            {
+                "state": 0,
+                "playerid": null, "type":null
+            },
+            {
+                "state": 0,
+                "playerid": null, "type":null
+            },
+            {
+                "state": 0,
+                "playerid": null, "type":null
+            },
+            {
+                "state": 0,
+                "playerid": null, "type":null
+            },
+            {
+                "state": 0,
+                "playerid": null, "type":null
+            },
+            {
+                "state": 0,
+                "playerid": null, "type":null
+            }
+        ],
+        [
+            {
+                "state": 0,
+                "playerid": null, "type":null
+            },
+            {
+                "state": 1,
+                "playerid": "1",
+                "type": "mine"
+            },
+            {
+                "state": 0,
+                "playerid": null, "type":null
+            },
+            {
+                "state": 0,
+                "playerid": null, "type":null
+            },
+            {
+                "state": 0,
+                "playerid": null, "type":null
+            },
+            {
+                "state": 0,
+                "playerid": null, "type":null
+            }
+        ]
+    ]
+}
