@@ -1,21 +1,21 @@
+(function main(){
 if ( ! Detector.webgl ) Detector.addGetWebGLMessage();
 
 var container, stats;
 var camera, scene, renderer;
-var clothGeometry;
-var sphere;
-var object, arrow;
-var rotate = true;
 var controls;
 var projector, mouse = { x: 0, y: 0 }, INTERSECTED;
 var keyboard = new THREEx.KeyboardState();
 var selectedBlock = null;
 var selectedMesh = null;
+var pi3 = pengine;
+
+pi3.mb = pi3.mapBuilder;
+delete pi3.mapBuilder;
 
 function createScene(){
     container = document.createElement( 'div' );
     document.body.appendChild( container );
-    // scene
     scene = new THREE.Scene();
     scene.fog = new THREE.Fog( 0xcce0ff, 500, 10000 );
 }
@@ -51,64 +51,50 @@ function createLight1(){
     return light;
 }
 
-function createLight2(){
-    var light = new THREE.DirectionalLight( 0x3dff0c, 0.35 );
-    light.position.set( 0, -1, 0 );
-    return light;
+function createGround(){
+    var initColor = new THREE.Color( 0x497f13 );
+    var initTexture = THREE.ImageUtils.generateDataTexture( 1, 1, initColor );
+
+    var groundMaterial = new THREE.MeshPhongMaterial( { color: 0xffffff, specular: 0x111111, map: initTexture } );
+    var groundTexture = THREE.ImageUtils.loadTexture( "../examples/textures/terrain/grasslight-big.jpg", undefined, function() { groundMaterial.map = groundTexture } );
+
+    groundTexture.wrapS = groundTexture.wrapT = THREE.RepeatWrapping;
+    groundTexture.repeat.set( 25, 25 );
+    groundTexture.anisotropy = 16;
+
+    var mesh = new THREE.Mesh( new THREE.PlaneGeometry( 20000, 20000 ), groundMaterial );
+    mesh.position.y = 0;
+    mesh.rotation.x = - Math.PI / 2;
+    mesh.receiveShadow = true;
+    scene.add( mesh );
+}
+
+function setRenderer(){
+    renderer = new THREE.WebGLRenderer( { antialias: true } );
+    renderer.setSize( window.innerWidth, window.innerHeight );
+    renderer.setClearColor( scene.fog.color );
+    container.appendChild( renderer.domElement );
+    renderer.gammaInput = true;
+    renderer.gammaOutput = true;
+    renderer.physicallyBasedShading = true;
+    renderer.shadowMapEnabled = true;
 }
 
 function init() {
-    // lights
-    var light, materials;
+    var light;
 
     createScene();
     createCamera();
 
     controls = new THREE.OrbitControls( camera );
     controls.addEventListener( 'change', render );
-
-    scene.add( new THREE.AmbientLight( 0x556688 ) );
-
-    (function addLights(){
-        light = createLight1();
-        scene.add( light );
-        light = createLight2();
-        scene.add( light );
-    })();
-
-    (function createGround(){
-        return;
-        var initColor = new THREE.Color( 0x497f13 );
-        var initTexture = THREE.ImageUtils.generateDataTexture( 1, 1, initColor );
-
-        var groundMaterial = new THREE.MeshPhongMaterial( { color: 0xffffff, specular: 0x111111, map: initTexture } );
-        var groundTexture = THREE.ImageUtils.loadTexture( "../examples/textures/terrain/grasslight-big.jpg", undefined, function() { groundMaterial.map = groundTexture } );
-
-        groundTexture.wrapS = groundTexture.wrapT = THREE.RepeatWrapping;
-        groundTexture.repeat.set( 25, 25 );
-        groundTexture.anisotropy = 16;
-
-        var mesh = new THREE.Mesh( new THREE.PlaneGeometry( 20000, 20000 ), groundMaterial );
-        mesh.position.y = 0;
-        mesh.rotation.x = - Math.PI / 2;
-        mesh.receiveShadow = true;
-        scene.add( mesh );
-    })();
-
-    pengine.mapBuilder.buildBlockMap("./maps/blockmap1.json", scene);
-    pengine.mapBuilder.buildGameMap("./maps/gamemap1.json", scene);
-
-    (function setRenderer(){
-        renderer = new THREE.WebGLRenderer( { antialias: true } );
-        renderer.setSize( window.innerWidth, window.innerHeight );
-        renderer.setClearColor( scene.fog.color );
-        container.appendChild( renderer.domElement );
-        renderer.gammaInput = true;
-        renderer.gammaOutput = true;
-        renderer.physicallyBasedShading = true;
-        renderer.shadowMapEnabled = true;
-    })();
-
+    scene.add( new THREE.AmbientLight( 0x223388 ) );
+    light = createLight1();
+    scene.add( light );
+    //createGround();//TODO: when created, after that, you cannot select a block
+    pi3.mb.buildBlockMap("./maps/blockmap1.json", scene);
+    pi3.mb.buildGameMap("./maps/gamemap1.json", scene);
+    setRenderer();
     stats = new Stats();
     container.appendChild( stats.domElement );
     window.addEventListener( 'resize', onWindowResize, false );
@@ -120,16 +106,19 @@ $(document).ready(function(){
 
     // when the mouse moves, call the given function
     document.addEventListener( 'mousemove', onDocumentMouseMove, false );
+
     $(document).mousedown(function(){
         $("body").addClass("mousedown");
     });
+
     $(document).mouseup(function(){
         $("body").removeClass("mousedown");
     });
+
     $(document).click(function(){
         if(INTERSECTED){
             if(selectedBlock){
-                selectedMesh.material.color.setHex( pengine.mapBuilder.getType(selectedBlock[0],selectedBlock[1])==="water"?0x0000ff: 0xffffff );
+                selectedMesh.material.color.setHex( pi3.mb.getType(selectedBlock[0],selectedBlock[1])==="water"?0x0000ff: 0xffffff );
             }
             INTERSECTED.material.color.setHex( 0xffff00 );
             selectedMesh = INTERSECTED;
@@ -188,13 +177,13 @@ function animate() {
         var bmH = height/50;
 
         //check if block is water
-        if(pengine.mapBuilder.isWater(bmX,bmZ)){
+        if(pi3.mb.isWater(bmX,bmZ)){
             bmH = 0;
         }
 
         if(selectedMesh){
             selectedMesh.material.color.setHex( 0xffff00 );
-            $("#txt1").val("x:"+bmX+",z:"+bmZ+", height:"+ bmH  + "\n\nSELECTED:"+   (selectedBlock||'') + " type:" + pengine.mapBuilder.getType(selectedBlock[0],selectedBlock[1]));
+            $("#txt1").val("x:"+bmX+",z:"+bmZ+", height:"+ bmH  + "\n\nSELECTED:"+   (selectedBlock||'') + " type:" + pi3.mb.getType(selectedBlock[0],selectedBlock[1]));
         }
     }
 
@@ -227,10 +216,12 @@ $("#setHeight").click(function(){
 });
 
 function setHeight(newVal){
-    pengine.mapBuilder.setHeight(selectedBlock[0],selectedBlock[1], newVal , selectedMesh);
+    pi3.mb.setHeight(selectedBlock[0],selectedBlock[1], newVal , selectedMesh);
 }
 
 function render() {
     var timer = Date.now() * 0.0002;
     renderer.render( scene, camera );
 }
+
+})();
