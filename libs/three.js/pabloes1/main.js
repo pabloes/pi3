@@ -1,4 +1,4 @@
-(function main(){
+var main = function(){
 if ( ! Detector.webgl ) Detector.addGetWebGLMessage();
 
 var container, stats;
@@ -9,6 +9,7 @@ var keyboard = new THREEx.KeyboardState();
 var selectedBlock = null;
 var selectedMesh = null;
 var pi3 = pengine;
+var jqDocument = $(document);
 
 pi3.mb = pi3.mapBuilder;
 
@@ -90,14 +91,14 @@ function init() {
     scene.add( new THREE.AmbientLight( 0x223388 ) );
     light = createLight1();
     scene.add( light );
-    //createGround();//TODO: PI3-1 when created, after that, you cannot select a block
+    //createGround();//TODO PI3-1 when created, after that, you cannot select a block
     pi3.mb.buildBlockMap("./maps/blockmap1.json", scene);
     pi3.mb.buildGameMap("./maps/gamemap1.json", scene);
     setRenderer();
     stats = new Stats();
     container.appendChild( stats.domElement );
 }
-var jqDocument = $(document);
+
 jqDocument.ready(function(){
     init();
     projector = new THREE.Projector();
@@ -110,13 +111,16 @@ jqDocument.ready(function(){
     jqDocument.click(clickEvent);
     document.addEventListener( 'mousemove', onDocumentMouseMove, false );
     window.addEventListener( 'resize', onWindowResize, false );
-
-    $("#setHeight").click(setHeightClick);
-    $("#AddXZ").click(AddXZClick);
-    $("#exportBlockMap").click(exportBlockMap);
-    $("#exportGameToJSON").click(exportGameToJSON);
-
+    $("a").click(aClick);
 });
+
+function aClick(){
+    executeAction($(this).attr("id"));
+}
+
+function executeAction(name){
+    $("#"+name).click( window.main[name]() );
+}
 
 function clickEvent(){
         if(INTERSECTED){
@@ -129,30 +133,9 @@ function clickEvent(){
         }
 }
 
-function exportBlockMap(){
-    pengine.mapBuilder.exportToJSON();
-}
-
-function exportGameToJSON(){
-    pengine.mapBuilder.exportGameToJSON();
-}
-
-function setHeight(newVal){
-        pi3.mb.setHeight(selectedBlock[0],selectedBlock[1], newVal , selectedMesh, scene);
-}
-
-function setHeightClick(){
-        var retVal = prompt("Enter new height value for the selected block", selectedMesh.height);
-        setHeight(retVal);
-}
-
-function AddXZClick(){
-    pengine.mapBuilder.AddXZ(scene);
-}
-
 function onDocumentMouseMove(event){
-    mouse.x = ( event.clientX / window.innerWidth ) * 2 - 1;
-    mouse.y = - ( event.clientY / window.innerHeight ) * 2 + 1;
+        mouse.x = ( event.clientX / window.innerWidth ) * 2 - 1;
+        mouse.y = - ( event.clientY / window.innerHeight ) * 2 + 1;
 }
 
 function onWindowResize() {
@@ -208,14 +191,29 @@ function animate() {
             $("#txt1").val("x:"+bmX+",z:"+bmZ+", height:"+ bmH  + "\n\nSELECTED:"+   (selectedBlock||'') + " type:" + pi3.mb.getType(selectedBlock[0],selectedBlock[1]));
         }
     }
-
     if ( keyboard.pressed("z") ){
         // do something
     }
-
     controls.update();
     stats.update();
     render();
+}
+
+function exportBlockMap(){
+    pi3.mb.exportToJSON();
+}
+
+function exportGameToJSON(){
+    pi3.mb.exportGameToJSON();
+}
+
+function setHeight(){
+    var retVal = prompt("Enter new height value for the selected block", selectedMesh.height);
+    pi3.mb.setHeight(selectedBlock[0],selectedBlock[1], retVal , selectedMesh, scene);
+}
+
+function addXZ(){
+    pengine.mapBuilder.AddXZ(scene);
 }
 
 function render() {
@@ -223,5 +221,11 @@ function render() {
     renderer.render( scene, camera );
 }
 
-})();
+    return {
+        exportBlockMap:exportBlockMap,
+        exportGameToJSON:exportGameToJSON,
+        addXZ:addXZ,
+        setHeight:setHeight
+    };
+}();
 
