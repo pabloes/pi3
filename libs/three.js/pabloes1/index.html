@@ -9,8 +9,8 @@
 </head>
 <body>
 <div id="info">
-    JSON: <a onclick="pengine.blockMapBuilder.exportToJSON();">blockMap</a> <a onclick="pengine.blockMapBuilder.exportGameToJSON();">gameMap</a> <br/>
-    AddXZ: <a onclick="pengine.blockMapBuilder.AddXZ();">AddXZ</a>
+    JSON: <a id="exportBlockMap">blockMap</a> <a id="exportGameToJSON">gameMap</a> <br/>
+    AddXZ: <a id="AddXZ">AddXZ</a>
     setHeight: <a id="setHeight">setHeight</a>
    <div>
        <textarea rows="4" cols="50" id="txt2"></textarea>
@@ -24,6 +24,7 @@
 <script src="../examples/js/libs/stats.min.js"></script>
 <script src="pengine/OrbitControls.js"></script>
 <script src="pengine/mapBuilder.js"></script>
+<script src="pengine/sceneBuilder.js"></script>
 <script src="pengine/THREEx.KeyboardState.js"></script>
 <script src="main.js"></script>
 

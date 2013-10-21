@@ -11,7 +11,7 @@ var selectedMesh = null;
 var pi3 = pengine;
 
 pi3.mb = pi3.mapBuilder;
-delete pi3.mapBuilder;
+
 
 function createScene(){
     container = document.createElement( 'div' );
@@ -99,36 +99,55 @@ function init() {
     container.appendChild( stats.domElement );
     window.addEventListener( 'resize', onWindowResize, false );
 }
+
 $(document).ready(function(){
     init();
     projector = new THREE.Projector();
     animate();
-
-    // when the mouse moves, call the given function
-    document.addEventListener( 'mousemove', onDocumentMouseMove, false );
-
     $(document).mousedown(function(){
         $("body").addClass("mousedown");
     });
-
     $(document).mouseup(function(){
         $("body").removeClass("mousedown");
     });
+    document.addEventListener( 'mousemove', onDocumentMouseMove, false );
+    $(document).click(clickEvent);
+    $("#setHeight").click(setHeightClick);
+    $("#AddXZ").click(AddXZClick);
+    $("#exportBlockMap").click(exportBlockMap);
+    $("#exportGameToJSON").click(exportGameToJSON);
 
-    $(document).click(function(){
-        if(INTERSECTED){
-            if(selectedBlock){
-                selectedMesh.material.color.setHex( pi3.mb.getType(selectedBlock[0],selectedBlock[1])==="water"?0x0000ff: 0xffffff );
-            }
-            INTERSECTED.material.color.setHex( 0xffff00 );
-            selectedMesh = INTERSECTED;
-            selectedBlock = fromIntersectToMap(INTERSECTED);
-        }
-    });
 });
 
-function onDocumentMouseMove(event)
-{
+function exportBlockMap(){
+    pengine.mapBuilder.exportToJSON();
+}
+
+function exportGameToJSON(){
+    pengine.mapBuilder.exportGameToJSON();
+}
+
+function setHeightClick(){
+        var retVal = prompt("Enter new height value for the selected block", selectedMesh.height);
+        setHeight(retVal);
+}
+
+function AddXZClick(){
+    pengine.mapBuilder.AddXZ(scene);
+}
+
+function clickEvent(){
+    if(INTERSECTED){
+        if(selectedBlock){
+            selectedMesh.material.color.setHex( pi3.mb.getType(selectedBlock[0],selectedBlock[1])==="water"?0x0000ff: 0xffffff );
+        }
+        INTERSECTED.material.color.setHex( 0xffff00 );
+        selectedMesh = INTERSECTED;
+        selectedBlock = pi3.mb.getMapPosition(INTERSECTED);
+    }
+}
+
+function onDocumentMouseMove(event){
     mouse.x = ( event.clientX / window.innerWidth ) * 2 - 1;
     mouse.y = - ( event.clientY / window.innerHeight ) * 2 + 1;
 }
@@ -195,28 +214,9 @@ function animate() {
     stats.update();
     render();
 }
-function fromIntersectToMap(intersectObject){
-    if(intersectObject){
-        var bm = new Array(3);
-        var px = intersectObject.position.x;
-        var pz = intersectObject.position.pz;
-        var height = intersectObject.geometry.height;
-
-        var bmX = intersectObject.position.x/200;
-        var bmZ = intersectObject.position.z/200;
-
-        return   [bmX,bmZ] ;
-    }else{
-        return  null;
-    }
-}
-$("#setHeight").click(function(){
-    var retVal = prompt("Enter new height value for the selected block", selectedMesh.height);
-    setHeight(retVal);
-});
 
 function setHeight(newVal){
-    pi3.mb.setHeight(selectedBlock[0],selectedBlock[1], newVal , selectedMesh);
+    pi3.mb.setHeight(selectedBlock[0],selectedBlock[1], newVal , selectedMesh, scene);
 }
 
 function render() {
@@ -225,3 +225,4 @@ function render() {
 }
 
 })();
+
