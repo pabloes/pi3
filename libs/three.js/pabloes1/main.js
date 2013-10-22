@@ -20,6 +20,7 @@ function createCamera(){
     camera.position.x = 100
     camera.position.z = 100;
     scene.add( camera );
+    console.log(scene);
 }
 
 function createLight1(){
@@ -102,7 +103,7 @@ jqDocument.ready(function(){
     }).mouseup(function(){
         $("body").removeClass("mousedown");
     });
-    jqDocument.click(clickEvent);
+    jqDocument.click(click3DEvent);
     document.addEventListener( 'mousemove', onDocumentMouseMove, false );
     window.addEventListener( 'resize', onWindowResize, false );
     $("a").click(aClick);
@@ -116,7 +117,7 @@ function executeAction(name){
     $("#"+name).click( window.main[name]() );
 }
 
-function clickEvent(){
+function click3DEvent(){
         if(INTERSECTED){
             if(selectedBlock){
                 selectedMesh.material.color.setHex( pi3.mb.getType(selectedBlock[0],selectedBlock[1])==="water"?0x0000ff: 0xffffff );
