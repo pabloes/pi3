@@ -119,5 +119,4 @@
             getMapPosition:getMapPosition
         };
     }();
-
 })();

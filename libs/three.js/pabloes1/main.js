@@ -14,13 +14,6 @@ var jqDocument = $(document);
 pi3.mb = pi3.mapBuilder;
 
 
-function createScene(){
-    container = document.createElement( 'div' );
-    document.body.appendChild( container );
-    scene = new THREE.Scene();
-    scene.fog = new THREE.Fog( 0xcce0ff, 500, 10000 );
-}
-
 function createCamera(){
     camera = new THREE.PerspectiveCamera( 30, window.innerWidth / window.innerHeight, 1, 10000 );
     camera.position.y = 3000;
@@ -83,8 +76,9 @@ function setRenderer(){
 
 function init() {
     var light;
-
-    createScene();
+    container = document.createElement( 'div' );
+    document.body.appendChild( container );
+    scene = pi3.sceneBuilder.createScene(scene);
     createCamera();
     controls = new THREE.OrbitControls( camera );
     controls.addEventListener( 'change', render );

@@ -117,11 +117,23 @@ window.pengine.sceneBuilder = function(){
         }
     }
 
+    /**
+     *
+     * @param scene
+     * @return {THREE.Scene}
+     */
+    function createScene(scene){
+        scene = new THREE.Scene();
+        scene.fog = new THREE.Fog( 0xcce0ff, 500, 10000 );
+        return scene;
+    }
+
     return {
         drawBoxes:drawBoxes,
         drawEntities:drawEntities,
         addPlaneGround:addPlaneGround,
         addBox:addBox,
-        setHeight:setHeight
+        setHeight:setHeight,
+        createScene:createScene
     }
 }();
