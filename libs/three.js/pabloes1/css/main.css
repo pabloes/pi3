@@ -3,7 +3,7 @@ body {
     color: #000;
     margin: 0px;
     overflow: hidden;
-    cursor: url(textures/cursor.png), auto;
+    cursor: url(../textures/cursor.png), auto;
 }
 body.mousedown{
     cursor:move;

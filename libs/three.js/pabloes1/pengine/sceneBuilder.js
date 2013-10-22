@@ -128,12 +128,31 @@ window.pengine.sceneBuilder = function(){
         return scene;
     }
 
+    function createGround(scene){
+        var initColor = new THREE.Color( 0x497f13 );
+        var initTexture = THREE.ImageUtils.generateDataTexture( 1, 1, initColor );
+
+        var groundMaterial = new THREE.MeshPhongMaterial( { color: 0xffffff, specular: 0x111111, map: initTexture } );
+        var groundTexture = THREE.ImageUtils.loadTexture( "../examples/textures/terrain/grasslight-big.jpg", undefined, function() { groundMaterial.map = groundTexture } );
+
+        groundTexture.wrapS = groundTexture.wrapT = THREE.RepeatWrapping;
+        groundTexture.repeat.set( 25, 25 );
+        groundTexture.anisotropy = 16;
+
+        var mesh = new THREE.Mesh( new THREE.PlaneGeometry( 20000, 20000 ), groundMaterial );
+        mesh.position.y = 0;
+        mesh.rotation.x = - Math.PI / 2;
+        mesh.receiveShadow = true;
+        scene.add( mesh );
+    }
+
     return {
         drawBoxes:drawBoxes,
         drawEntities:drawEntities,
         addPlaneGround:addPlaneGround,
         addBox:addBox,
         setHeight:setHeight,
-        createScene:createScene
+        createScene:createScene,
+        createGround:createGround
     }
 }();

@@ -1,0 +1,3 @@
+window.world.setEvents = function(){
+
+}();
