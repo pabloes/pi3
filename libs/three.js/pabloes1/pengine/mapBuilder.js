@@ -3,6 +3,7 @@
     window.pengine.mapBuilder = function(){
         var blockMap;
         var gameMap;
+
         /**
          *
          * @param blockMapURL
@@ -15,6 +16,12 @@
             });
         }
 
+        /**
+         *
+         * @param gameMapURL
+         * @param scene
+         * @param layer
+         */
         function buildGameMap(gameMapURL, scene, layer){
             $.getJSON(gameMapURL, function(data){
                 gameMap = data;
@@ -22,16 +29,26 @@
             });
         }
 
+        /**
+         *
+         */
         function exportToJSON(){
             $("#txt2").val(JSON.stringify(blockMap));
             console.log(JSON.stringify(blockMap));
         }
 
+        /**
+         *
+         */
         function exportGameToJSON(){
             $("#txt2").val(JSON.stringify(gameMap));
             console.log(JSON.stringify(gameMap));
         }
 
+        /**
+         *
+         * @param scene
+         */
         function addBlockArrayX(scene){
             var lx = blockMap.arrayMap[0].length;
             blockMap.arrayMap.forEach(function(arrX, index){
@@ -39,6 +56,11 @@
                 pengine.sceneBuilder.addPlaneGround(index, lx, scene, "water");
             });
         }
+
+        /**
+         *
+         * @param scene
+         */
         function addBlockArrayZ(scene){
             var yL = blockMap.arrayMap[0].length;
             var newArr = [];
@@ -55,20 +77,43 @@
 
         }
 
+        /**
+         *
+         * @param scene
+         * @constructor
+         */
         function AddXZ(scene){
             addBlockArrayX(scene);
             addBlockArrayZ(scene);
         }
 
+        /**
+         *
+         * @param x
+         * @param z
+         * @return {Boolean}
+         */
         function isWater(x,z){
             if(blockMap.arrayMap[x][z].type === "water")
             return true;
         }
 
+        /**
+         *
+         * @param x
+         * @param z
+         * @return {Boolean}
+         */
         function isPlane(x,z){
             return true;
         }
 
+        /**
+         *
+         * @param x
+         * @param z
+         * @return {*}
+         */
         function getType(x,z){
             return blockMap.arrayMap[x][z].type;
         }
