@@ -35,7 +35,7 @@
         function addBlockArrayX(scene){
             var lx = blockMap.arrayMap[0].length;
             blockMap.arrayMap.forEach(function(arrX, index){
-                arrX.push({type:"water",height:0});
+                arrX.push({});
                 pengine.sceneBuilder.addPlaneGround(index, lx, scene, "water");
             });
         }
