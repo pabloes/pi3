@@ -1,4 +1,5 @@
 (function(){
+    "use strict";
     window.pengine = window.pengine||{};
     window.pengine.mapBuilder = function(){
         var blockMap;
