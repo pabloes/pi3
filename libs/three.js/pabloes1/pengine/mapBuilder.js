@@ -13,7 +13,7 @@
         function buildBlockMap(blockMapURL, scene){
             $.getJSON(blockMapURL, function(data){
                 blockMap = data;
-                pengine.sceneBuilder.drawBoxes(blockMap.arrayMap, scene);
+                pengine.sceneBuilder.drawHexas(blockMap.arrayMap, scene);
             });
         }
 
@@ -95,7 +95,7 @@
          * @return {Boolean}
          */
         function isWater(x,z){
-            if(blockMap.arrayMap[x][z].type === "water")
+            if(blockMap && blockMap.arrayMap[x][z] && blockMap.arrayMap[x][z].type === "water")
             return true;
         }
 

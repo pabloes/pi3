@@ -148,6 +148,7 @@ window.world = window.world||function(){
             INTERSECTED = null;
         }
 
+        //TODO PI-1 FIX FROM BOX TO HEXAGONAL POSITIONS
         if(INTERSECTED){
            //averiguar la posicion blockMap segun su posicion en la escena
             var bm = new Array(3);

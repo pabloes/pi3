@@ -1,9 +1,26 @@
+(function(){
+'use strict';
 window.pengine = window.pengine||{};
 /**
  * Manage meshes and sprites in the scene
  * @return {}
  */
 window.pengine.sceneBuilder = function(){
+
+    var BLOCK_SIZE = 200;
+
+    function drawHexas(blockMapArray, scene){
+        for (var ix= 0; ix < blockMapArray.length; ix++) {
+            for (var iy= 0; iy < blockMapArray.length; iy++) {
+                var thisBlock = blockMapArray[ix][iy];
+                if(thisBlock &&  thisBlock.height > 0){
+                    addHexa(ix, thisBlock.height, iy,  scene );
+                }else{
+                    addHexaPlaneGround(ix,iy,scene, thisBlock.type );
+                }
+            }
+        }
+    }
 
     /**
      *
@@ -39,6 +56,64 @@ window.pengine.sceneBuilder = function(){
         }
     }
 
+    function getHexaPlaneGeometry(){
+        var geometry = getHexaGeometry();
+        return geometry;
+    }
+
+    function getHexaGeometry(){
+        var shape = new THREE.Shape();
+
+        var center = new THREE.Vector2(0,0);
+
+        var i = 0;
+        var angle, x_i, y_i;
+        var size = BLOCK_SIZE/2;
+        while(i<6){
+            angle = 2 * Math.PI / 6 * i;
+            x_i = center.x + size * Math.cos(angle);
+            y_i = center.y + size * Math.sin(angle);
+            if (i === 0){
+                shape.moveTo(x_i, y_i);
+            }else{
+                shape.lineTo(x_i, y_i);
+            }
+            i++;
+        }
+
+        var geometry = new THREE.ShapeGeometry(shape);
+
+        geometry.faces.push( new THREE.Face3( 0, 2, 1 ) );
+        geometry.computeFaceNormals();
+        geometry.applyMatrix( new THREE.Matrix4().makeTranslation( 1, 0.1, 0.1 ) );
+        geometry.verticesNeedUpdate = true;
+        return geometry;
+    }
+
+    /**
+     *
+     * @param x
+     * @param y
+     * @param z
+     * @param scene
+     */
+    function addHexa(x,y,z,scene){
+        var geo = getHexaGeometry();
+
+        var mat = new THREE.MeshPhongMaterial( { color: 0xddBB99, specular: 0x111111, shiness: 20 });
+        var mesh = new THREE.Mesh( geo, mat );
+        mesh.rotation.x = - Math.PI / 2;
+        console.log(x);
+
+        mesh.position.x = x*200;
+        mesh.position.y = y*100/2;
+        mesh.position.z = z*200;
+
+        mesh.receiveShadow = true;
+        mesh.castShadow = true;
+        scene.add( mesh );
+    }
+
     /**
      *
      * @param x
@@ -48,7 +123,7 @@ window.pengine.sceneBuilder = function(){
      * @param mat
      * @param scene
      */
-    function addBox(x,y,z, scene){
+    function addBox(x, y, z, scene){
         var geo = new THREE.CubeGeometry( 200, 50*y , 200 );
         var mat = new THREE.MeshPhongMaterial( { color: 0xddBB99, specular: 0x111111, shiness: 20 });
         var mesh = new THREE.Mesh( geo, mat );
@@ -58,6 +133,45 @@ window.pengine.sceneBuilder = function(){
         mesh.receiveShadow = true;
         mesh.castShadow = true;
         scene.add( mesh );
+    }
+
+    /**
+     *
+     * @param x
+     * @param z
+     * @param scene
+     * @param type
+     */
+    function addHexaPlaneGround(x,z, scene, type){
+        var geo = getHexaPlaneGeometry();
+
+        var mat = new THREE.MeshPhongMaterial( { color: 0xddBB99, specular: 0x111111, shiness: 20 });
+        var mesh = new THREE.Mesh( geo, mat );
+        mesh.rotation.x = - Math.PI / 2;
+        console.log(x);
+
+
+        var width = 100;
+        var height = Math.sqrt(3)/2 * width;
+
+        mesh.position.x = x*150;
+
+        if(isEven(x)){
+            mesh.position.z = z*height*2-height/2;
+        }else{
+            mesh.position.z = z*height*2+height/2;
+        }
+        /*mesh.position.z = z*200;*/
+        //mesh.position.y = y*100/2;
+
+
+        mesh.receiveShadow = true;
+        mesh.castShadow = true;
+        scene.add( mesh );
+    }
+
+    function isEven(num){
+        return num%2 === 0;
     }
 
     /**
@@ -128,6 +242,10 @@ window.pengine.sceneBuilder = function(){
         return scene;
     }
 
+    /**
+     * NOT USED
+     * @param scene
+     */
     function createGround(scene){
         var initColor = new THREE.Color( 0x497f13 );
         var initTexture = THREE.ImageUtils.generateDataTexture( 1, 1, initColor );
@@ -148,11 +266,14 @@ window.pengine.sceneBuilder = function(){
 
     return {
         drawBoxes:drawBoxes,
+        drawHexas:drawHexas,
         drawEntities:drawEntities,
         addPlaneGround:addPlaneGround,
+        addHexaPlaneGround:addHexaPlaneGround,
         addBox:addBox,
         setHeight:setHeight,
         createScene:createScene,
         createGround:createGround
     }
 }();
+})();
