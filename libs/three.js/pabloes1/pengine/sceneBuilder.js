@@ -103,7 +103,6 @@ window.pengine.sceneBuilder = function(){
         var mat = new THREE.MeshPhongMaterial( { color: 0xddBB99, specular: 0x111111, shiness: 20 });
         var mesh = new THREE.Mesh( geo, mat );
         mesh.rotation.x = - Math.PI / 2;
-        console.log(x);
 
         mesh.position.x = x*200;
         mesh.position.y = y*100/2;
@@ -144,16 +143,12 @@ window.pengine.sceneBuilder = function(){
      */
     function addHexaPlaneGround(x,z, scene, type){
         var geo = getHexaPlaneGeometry();
-
         var mat = new THREE.MeshPhongMaterial( { color: 0xddBB99, specular: 0x111111, shiness: 20 });
         var mesh = new THREE.Mesh( geo, mat );
-        mesh.rotation.x = - Math.PI / 2;
-        console.log(x);
-
-
         var width = 100;
         var height = Math.sqrt(3)/2 * width;
 
+        mesh.rotation.x = - Math.PI / 2;
         mesh.position.x = x*150;
 
         if(isEven(x)){
@@ -161,12 +156,13 @@ window.pengine.sceneBuilder = function(){
         }else{
             mesh.position.z = z*height*2+height/2;
         }
-        /*mesh.position.z = z*200;*/
-        //mesh.position.y = y*100/2;
-
 
         mesh.receiveShadow = true;
         mesh.castShadow = true;
+        //set custom properties
+        mesh.ox = x;
+        mesh.oz = z;
+        mesh.type = type;
         scene.add( mesh );
     }
 

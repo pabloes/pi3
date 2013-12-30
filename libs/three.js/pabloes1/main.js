@@ -6,7 +6,6 @@ window.world = window.world||function(){
     var controls;
     var projector, mouse = { x: 0, y: 0 }, INTERSECTED;
     var keyboard = new THREEx.KeyboardState();
-    var selectedBlock = null;
     var selectedMesh = null;
     var pi3 = pengine;
     var jqDocument = $(document);
@@ -101,12 +100,11 @@ window.world = window.world||function(){
 
     function click3DEvent(){
             if(INTERSECTED){
-                if(selectedBlock){
-                    selectedMesh.material.color.setHex( pi3.mb.getType(selectedBlock[0],selectedBlock[1])==="water"?0x0000ff: 0xffffff );
+                if(selectedMesh){
+                    selectedMesh.material.color.setHex( INTERSECTED.type==="water"?0x0000ff: 0xffffff );
                 }
                 INTERSECTED.material.color.setHex( 0xffff00 );
                 selectedMesh = INTERSECTED;
-                selectedBlock = pi3.mb.getMapPosition(INTERSECTED);
             }
     }
 
@@ -131,13 +129,14 @@ window.world = window.world||function(){
 
         if ( intersects.length > 0 )
         {
-            if ( intersects[ 0 ].object != INTERSECTED )
+            if ( intersects[ 0 ].object !== INTERSECTED )
             {
-                if ( INTERSECTED )
+                if ( INTERSECTED ){
                     INTERSECTED.material.color.setHex( INTERSECTED.currentHex );
-                    INTERSECTED = intersects[ 0 ].object;
-                    INTERSECTED.currentHex = INTERSECTED.material.color.getHex();
-                    INTERSECTED.material.color.setHex( 0xffff00 );
+                }
+                INTERSECTED = intersects[ 0 ].object;
+                INTERSECTED.currentHex = INTERSECTED.material.color.getHex();
+                INTERSECTED.material.color.setHex( 0xffff00 );
             }
 
         }else{
@@ -150,13 +149,9 @@ window.world = window.world||function(){
 
         //TODO PI-1 FIX FROM BOX TO HEXAGONAL POSITIONS
         if(INTERSECTED){
-           //averiguar la posicion blockMap segun su posicion en la escena
-            var bm = new Array(3);
-            var px = INTERSECTED.position.x;
-            var pz = INTERSECTED.position.pz;
             var height = INTERSECTED.geometry.height;
-            var bmX = INTERSECTED.position.x/200;
-            var bmZ = INTERSECTED.position.z/200;
+            var bmX = INTERSECTED.ox;
+            var bmZ = INTERSECTED.oz;
             var bmH = height/50;
 
             //check if block is water
@@ -166,11 +161,8 @@ window.world = window.world||function(){
 
             if(selectedMesh){
                 selectedMesh.material.color.setHex( 0xffff00 );
-                $("#txt1").val("x:"+bmX+",z:"+bmZ+", height:"+ bmH  + "\n\nSELECTED:"+   (selectedBlock||'') + " type:" + pi3.mb.getType(selectedBlock[0],selectedBlock[1]));
+                //$("#txt1").val("x:"+bmX+",z:"+bmZ+", height:"+ bmH  + "\n\nSELECTED:"+   (selectedBlock||'') + " type:" + pi3.mb.getType(selectedBlock[0],selectedBlock[1]));
             }
-        }
-        if ( keyboard.pressed("z") ){
-            // do something
         }
         controls.update();
         stats.update();
