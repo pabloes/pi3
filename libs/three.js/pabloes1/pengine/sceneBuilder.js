@@ -11,7 +11,8 @@ window.pengine.sceneBuilder = function(){
     var COLORS = {
         water:0x0000ff,
         normal:0xddBB99,
-        selection:0x00ff00
+        selection:0x00ff00,
+        specular:0x111111
     };
     var TYPES = {
         water:'water'
@@ -74,17 +75,7 @@ window.pengine.sceneBuilder = function(){
      * @returns {THREE.Geometry}
      */
     function getHexaPlaneGeometry(){
-        var geometry = getHexaGeometry();
-        return geometry;
-    }
-
-    /**
-     *
-     * @returns {THREE.Geometry}
-     */
-    function getHexaGeometry(){
         var shape = new THREE.Shape();
-
         var center = new THREE.Vector2(0,0);
 
         var i = 0;
@@ -113,21 +104,61 @@ window.pengine.sceneBuilder = function(){
 
     /**
      *
+     * @returns {THREE.Geometry}
+     */
+    function getHexaGeometry(oy){
+        var shape = new THREE.Shape();
+        var center = new THREE.Vector2(0,0);
+        var height = oy * 50;
+        var i = 0;
+        var angle, x_i, y_i;
+        var size = BLOCK_SIZE/2;
+
+        //building top
+        while(i<6){
+            angle = 2 * Math.PI / 6 * i;
+            x_i = center.x + size * Math.cos(angle);
+            y_i = center.y + size * Math.sin(angle);
+            if (i === 0){
+                shape.moveTo(x_i, y_i);
+            }else{
+                shape.lineTo(x_i, y_i);
+            }
+            i++;
+        }
+        var extrudeSettings = { amount: height||50, bevelSegments:0, steps:1 }; // bevelSegments: 2, steps: 2 , bevelSegments: 5, bevelSize: 8, bevelThickness:5
+        var geometry = shape.extrude(extrudeSettings);
+
+        geometry.faces.push( new THREE.Face3( 0, 2, 1 ) );
+        geometry.computeFaceNormals();
+        geometry.applyMatrix( new THREE.Matrix4().makeTranslation( 1, 0.1, 0.1 ) );
+        geometry.verticesNeedUpdate = true;
+        return geometry;
+    }
+
+    /**
+     *
      * @param x
      * @param y
      * @param z
      * @param scene
      */
     function addHexa(x,y,z,scene){
-        var geo = getHexaGeometry();
+        var geo = getHexaGeometry(y);
 
-        var mat = new THREE.MeshPhongMaterial( { color: COLORS.normal, specular: 0x111111, shiness: 20 });
+        var mat = new THREE.MeshPhongMaterial( { color: COLORS.normal, specular: COLORS.specular, shiness: 20 });
         var mesh = new THREE.Mesh( geo, mat );
         mesh.rotation.x = - Math.PI / 2;
-
-        mesh.position.x = x*200;
-        mesh.position.y = y*100/2;
-        mesh.position.z = z*200;
+        var ww = 100;
+        var hh = Math.sqrt(3)/2 * ww;
+        mesh.position.x = x*150;
+        if(isEven(x)){
+            mesh.position.z = z*hh*2-hh/2;
+        }else{
+            mesh.position.z = z*hh*2+hh/2;
+        }
+       /* mesh.position.x = x*200;
+        mesh.position.z = z*200;*/
 
         mesh.receiveShadow = true;
         mesh.castShadow = true;
@@ -145,7 +176,7 @@ window.pengine.sceneBuilder = function(){
      */
     function addBox(x, y, z, scene){
         var geo = new THREE.CubeGeometry( 200, 50*y , 200 );
-        var mat = new THREE.MeshPhongMaterial( { color: COLORS.normal, specular: 0x111111, shiness: 20 });
+        var mat = new THREE.MeshPhongMaterial( { color: COLORS.normal, specular: COLORS.specular, shiness: 20 });
         var mesh = new THREE.Mesh( geo, mat );
         mesh.position.x = x*200;
         mesh.position.y = y*50/2;
