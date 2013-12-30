@@ -9,6 +9,10 @@ window.world = window.world||function(){
     var selectedMesh = null;
     var pi3 = pengine;
     var jqDocument = $(document);
+    var COLORS = pi3.sceneBuilder.COLORS;
+    var BLOCK_MAP = "./maps/blockmap1.json";
+    var GAME_MAP = "./maps/gamemap1.json";
+    COLORS.hover = 0xffff00;
 
     if ( ! Detector.webgl ){ Detector.addGetWebGLMessage(); }
     pi3.mb = pi3.mapBuilder;
@@ -82,9 +86,9 @@ window.world = window.world||function(){
         scene.add( new THREE.AmbientLight( 0x223388 ) );
         light = createLight1();
         scene.add( light );
-        //pi3.sceneBuilder.createGround(scene); //TODO PI3-1 when created, after that, you cannot select a block
-        pi3.mb.buildBlockMap("./maps/blockmap1.json", scene);
-        pi3.mb.buildGameMap("./maps/gamemap1.json", scene);
+        //pi3.sceneBuilder.createGround(scene); //TODO some problems when created
+        pi3.mb.buildBlockMap(BLOCK_MAP, scene);
+        pi3.mb.buildGameMap(GAME_MAP, scene);
         setRenderer();
         stats = new Stats();
         container.appendChild( stats.domElement );
@@ -100,11 +104,12 @@ window.world = window.world||function(){
 
     function click3DEvent(){
             if(INTERSECTED){
+                //restore color of previous selected
                 if(selectedMesh){
-                    selectedMesh.material.color.setHex( INTERSECTED.type==="water"?0x0000ff: 0xffffff );
+                    selectedMesh.material.color.setHex( selectedMesh.type==="water"?COLORS.water: COLORS.normal );
                 }
-                INTERSECTED.material.color.setHex( 0xffff00 );
                 selectedMesh = INTERSECTED;
+                selectedMesh.material.color.setHex( COLORS.selection );
             }
     }
 
@@ -121,7 +126,6 @@ window.world = window.world||function(){
 
     function animate() {
         requestAnimationFrame( animate );
-        var time = Date.now();
         var vector = new THREE.Vector3( mouse.x, mouse.y, 1 );
         projector.unprojectVector( vector, camera );
         var ray = new THREE.Raycaster( camera.position, vector.sub( camera.position ).normalize() );
@@ -131,39 +135,30 @@ window.world = window.world||function(){
         {
             if ( intersects[ 0 ].object !== INTERSECTED )
             {
-                if ( INTERSECTED ){
-                    INTERSECTED.material.color.setHex( INTERSECTED.currentHex );
+                if ( INTERSECTED && INTERSECTED.originalColor && isNotSelected(INTERSECTED) ){
+                    INTERSECTED.material.color.setHex( INTERSECTED.originalColor );
                 }
                 INTERSECTED = intersects[ 0 ].object;
-                INTERSECTED.currentHex = INTERSECTED.material.color.getHex();
-                INTERSECTED.material.color.setHex( 0xffff00 );
+                if(INTERSECTED && isNotSelected(INTERSECTED)){
+                    INTERSECTED.originalColor = INTERSECTED.material.color.getHex();
+                    INTERSECTED.material.color.setHex( COLORS.hover );
+                }
+
             }
 
         }else{
+            // When not intersection is present, empty space
             // restore previous intersection object (if it exists) to its original color
-            if ( INTERSECTED ){
-                INTERSECTED.material.color.setHex( INTERSECTED.currentHex );
+            if ( INTERSECTED && isNotSelected(INTERSECTED) ){
+                INTERSECTED.material.color.setHex( INTERSECTED.originalColor );
             }
             INTERSECTED = null;
         }
 
-        //TODO PI-1 FIX FROM BOX TO HEXAGONAL POSITIONS
-        if(INTERSECTED){
-            var height = INTERSECTED.geometry.height;
-            var bmX = INTERSECTED.ox;
-            var bmZ = INTERSECTED.oz;
-            var bmH = height/50;
-
-            //check if block is water
-            if(pi3.mb.isWater(bmX,bmZ)){
-                bmH = 0;
-            }
-
-            if(selectedMesh){
-                selectedMesh.material.color.setHex( 0xffff00 );
-                //$("#txt1").val("x:"+bmX+",z:"+bmZ+", height:"+ bmH  + "\n\nSELECTED:"+   (selectedBlock||'') + " type:" + pi3.mb.getType(selectedBlock[0],selectedBlock[1]));
-            }
+        function isNotSelected(mesh){
+            return mesh !== selectedMesh;
         }
+
         controls.update();
         stats.update();
         render();

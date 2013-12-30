@@ -10,7 +10,8 @@ window.pengine.sceneBuilder = function(){
     var BLOCK_SIZE = 200;
     var COLORS = {
         water:0x0000ff,
-        normal:0xddBB99
+        normal:0xddBB99,
+        selection:0x00ff00
     };
     var TYPES = {
         water:'water'
@@ -183,6 +184,7 @@ window.pengine.sceneBuilder = function(){
         mesh.ox = x;
         mesh.oz = z;
         mesh.type = type;
+        mesh.oh = 0;
         scene.add( mesh );
     }
 
@@ -288,7 +290,8 @@ window.pengine.sceneBuilder = function(){
         addBox:addBox,
         setHeight:setHeight,
         createScene:createScene,
-        createGround:createGround
+        createGround:createGround,
+        COLORS:COLORS
     }
 }();
 })();
