@@ -182,7 +182,6 @@ window.world = window.world||function(){
     }
 
     function render() {
-        var timer = Date.now() * 0.0002;
         renderer.render( scene, camera );
     }
 
