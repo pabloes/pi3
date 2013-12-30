@@ -8,15 +8,27 @@ window.pengine = window.pengine||{};
 window.pengine.sceneBuilder = function(){
 
     var BLOCK_SIZE = 200;
+    var COLORS = {
+        water:0x0000ff,
+        normal:0xddBB99
+    };
+    var TYPES = {
+        water:'water'
+    };
 
-    function drawHexas(blockMapArray, scene){
+    /**
+     *
+     * @param blockMapArray
+     * @param scene
+     */
+    function drawHexagons(blockMapArray, scene){
         for (var ix= 0; ix < blockMapArray.length; ix++) {
             for (var iy= 0; iy < blockMapArray.length; iy++) {
                 var thisBlock = blockMapArray[ix][iy];
                 if(thisBlock &&  thisBlock.height > 0){
                     addHexa(ix, thisBlock.height, iy,  scene );
                 }else{
-                    addHexaPlaneGround(ix,iy,scene, thisBlock.type );
+                    addHexagonalGround(ix,iy,scene, thisBlock.type );
                 }
             }
         }
@@ -56,11 +68,19 @@ window.pengine.sceneBuilder = function(){
         }
     }
 
+    /**
+     *
+     * @returns {THREE.Geometry}
+     */
     function getHexaPlaneGeometry(){
         var geometry = getHexaGeometry();
         return geometry;
     }
 
+    /**
+     *
+     * @returns {THREE.Geometry}
+     */
     function getHexaGeometry(){
         var shape = new THREE.Shape();
 
@@ -100,7 +120,7 @@ window.pengine.sceneBuilder = function(){
     function addHexa(x,y,z,scene){
         var geo = getHexaGeometry();
 
-        var mat = new THREE.MeshPhongMaterial( { color: 0xddBB99, specular: 0x111111, shiness: 20 });
+        var mat = new THREE.MeshPhongMaterial( { color: COLORS.normal, specular: 0x111111, shiness: 20 });
         var mesh = new THREE.Mesh( geo, mat );
         mesh.rotation.x = - Math.PI / 2;
 
@@ -124,7 +144,7 @@ window.pengine.sceneBuilder = function(){
      */
     function addBox(x, y, z, scene){
         var geo = new THREE.CubeGeometry( 200, 50*y , 200 );
-        var mat = new THREE.MeshPhongMaterial( { color: 0xddBB99, specular: 0x111111, shiness: 20 });
+        var mat = new THREE.MeshPhongMaterial( { color: COLORS.normal, specular: 0x111111, shiness: 20 });
         var mesh = new THREE.Mesh( geo, mat );
         mesh.position.x = x*200;
         mesh.position.y = y*50/2;
@@ -141,9 +161,9 @@ window.pengine.sceneBuilder = function(){
      * @param scene
      * @param type
      */
-    function addHexaPlaneGround(x,z, scene, type){
+    function addHexagonalGround(x,z, scene, type){
         var geo = getHexaPlaneGeometry();
-        var mat = new THREE.MeshPhongMaterial( { color: 0xddBB99, specular: 0x111111, shiness: 20 });
+        var mat = new THREE.MeshPhongMaterial( { color: type===TYPES.water?COLORS.water:COLORS.normal, specular: 0x111111, shiness: 20 });
         var mesh = new THREE.Mesh( geo, mat );
         var width = 100;
         var height = Math.sqrt(3)/2 * width;
@@ -179,8 +199,7 @@ window.pengine.sceneBuilder = function(){
      */
     function addPlaneGround(x,z, scene, type){
         var geo = new THREE.PlaneGeometry( 200, 200);
-        var color = type=="water"?0x0000ff:0xffffff;
-
+        var color = type===TYPES.water?COLORS.water:COLORS.normal;
         var mat = new THREE.MeshPhongMaterial( {color: color, specular: 0x111111, shiness: 0 });
         var mesh = new THREE.Mesh( geo, mat );
         mesh.position.x = x*200;
@@ -262,10 +281,10 @@ window.pengine.sceneBuilder = function(){
 
     return {
         drawBoxes:drawBoxes,
-        drawHexas:drawHexas,
+        drawHexas:drawHexagons,
         drawEntities:drawEntities,
         addPlaneGround:addPlaneGround,
-        addHexaPlaneGround:addHexaPlaneGround,
+        addHexaPlaneGround:addHexagonalGround,
         addBox:addBox,
         setHeight:setHeight,
         createScene:createScene,
